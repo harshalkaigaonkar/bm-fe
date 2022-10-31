@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectBills, selectCategories } from '../slices/billSlice';
 import MainDashBoard from '../components/MainDashBoard';
 import Bills from '../components/bill/Bills';
-import CategoryFilter from '../components/CategoryFilter';
+import Filter from '../components/Filter';
 import { useState } from 'react';
 import Chart from '../components/chart/Chart';
 
@@ -28,19 +28,23 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col">
-        <MainDashBoard setShowChart={setShowChart} />
+        <MainDashBoard showChart={showChart} setShowChart={setShowChart} setQuery={setQuery} setSelected={setSelected} />
         <div className='inline-flex justify-between items-center w-full py-8 px-3'>
           <div className='inline-flex gap-4'>
-            { showChart && <button onClick={() => setShowChart(false)} className='p-2 rounded-full bg-gray-300 hover:bg-gray-400 hover:shadow'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M9.53 2.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l4.72 4.72a.75.75 0 11-1.06 1.06l-6-6a.75.75 0 010-1.06l6-6a.75.75 0 011.06 0z" clipRule="evenodd" /></svg></button>}
-            <p className='w-fit text-left font-semibold text-2xl'>Your {showChart ? "Chart": "Bills"} for {monthNames[new Date().getMonth()]}:</p>
+            { showChart && <button onClick={() => {
+              setQuery("");
+              setSelected({});
+              setShowChart(false)
+            }} className='p-2 rounded-full bg-gray-300 hover:bg-gray-400 hover:shadow'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M9.53 2.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l4.72 4.72a.75.75 0 11-1.06 1.06l-6-6a.75.75 0 010-1.06l6-6a.75.75 0 011.06 0z" clipRule="evenodd" /></svg></button>}
+            <p className='mb-3 w-fit text-left font-semibold text-2xl'>{showChart ? "Time-Series Chart for 2022": "All Bills"} :</p>
           </div>
-          <CategoryFilter query={query} setQuery={setQuery} selected={selected} setSelected={setSelected} />
+          <Filter query={query} setQuery={setQuery} selected={selected} setSelected={setSelected} showChart={showChart} monthNames={monthNames} />
         </div>
         {
           !showChart ?(
             <Bills query={query} selected={selected}  />
           ):(
-            <Chart bills={bills} />
+            <Chart bills={bills} selected={selected} monthNames={monthNames} />
           )
         }
       </main>

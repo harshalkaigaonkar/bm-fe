@@ -25,7 +25,7 @@ const Bills: React.FC<BillsProps> = ({query, selected}) => {
     return bill.category.includes(selected.category);
   }
   else {
-    return true;
+    return parseInt(bill.date.split("-")[1], 10) === new Date().getMonth() + 1;
   }
   })
 
