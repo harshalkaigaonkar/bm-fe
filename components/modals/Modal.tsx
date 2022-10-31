@@ -4,13 +4,15 @@ import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteBill, updateBills, addBill, selectBills, BillState, selectCategories } from '../../slices/billSlice';
-import CategoryModal from './CategoryModal';
+import SingleInputModal from './SingleInputModal';
 
 export type ModalType = {
   open: boolean,
   setOpen: any,
   bill?: BillState|null,
   deleteModal?: boolean|null,
+  budgetModal?: boolean|null,
+  budget?: number|null
 }
 
 export default function Modal({open, setOpen, bill = null, deleteModal = null}: ModalType) {
@@ -24,6 +26,7 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
   const [category, setCategory] = useState<string>(bill ? bill.category : '')
   const [amount, setAmount] = useState<string>(bill ? bill.amount : '0')
   const [date, setDate] = useState<string>(bill ? bill.date : new Date().toISOString().split("T")[0])
+  const [paid, setPaid] = useState<number>(bill ? bill.paid : 0)
   const [catModalOpen, setCatModalOpen] = useState<boolean>(false)
   
   const cancelButtonRef = useRef(null)
@@ -39,6 +42,7 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
       date,
       category,
       amount,
+      paid,
     }
     dispatch(updateBills(updateBill));
     if(typeof window === 'object' && bill) localStorage.setItem("bills", JSON.stringify({
@@ -66,6 +70,7 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
       date,
       category,
       amount,
+      paid
     }
     dispatch(addBill(createdBill));
     if(typeof window === 'object') localStorage.setItem("bills", JSON.stringify({
@@ -88,7 +93,6 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
     setOpen(false);
   }
   const onAddNewCategory = () => {
-    // setOpen(false);
     setCatModalOpen(true);
   }
 
@@ -107,7 +111,6 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
           >
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
-
           <div className="fixed inset-0 z-10 overflow-y-auto">
             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
               <Transition.Child
@@ -141,6 +144,10 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
                     <div className="mb-5 bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg block w-30 p-2.5 dark:text-white">$</div>
                     <input required type="number" id={`amount_${id}`} value={parseInt(amount, 10)} onChange={(e) => setAmount(e.target.value.toString())} className="mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Bill Amount" />
                   </div>
+                  <div className="inline-flex gap-2 items-center mb-5">
+                  {paid === 0 ? <input type="checkbox" id={`checkbox_${id}`} value={paid} onChange={(e) => setPaid(paid ? 0:1)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Bill Paid" /> : <input type="checkbox" id={`checkbox_${id}`} value={paid} checked onChange={(e) => setPaid(paid ? 0:1)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Bill Paid" />}
+                  <label htmlFor="paid" className="block text-sm font-medium text-gray-900 dark:text-gray-300">Payed</label>
+                  </div>
                   </div>
                   <div>
                   <label htmlFor="category" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray-300">Category *</label>
@@ -162,7 +169,7 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
                       className={`mb-5 w-[35%] inline-flex flex-row items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm`}
                       onClick={onAddNewCategory}
                     >
-                    New
+                      New
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="ml-2 mr-1 w-4 h-4"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" /></svg>
                     </button>
                   </div>
@@ -234,7 +241,7 @@ export default function Modal({open, setOpen, bill = null, deleteModal = null}: 
           </div>
         </Dialog>
       </Transition.Root>
-      {catModalOpen && <CategoryModal open={catModalOpen} setOpen={setCatModalOpen} />}
+      {catModalOpen && <SingleInputModal open={catModalOpen} setOpen={setCatModalOpen} />}
     </>
   )
 }

@@ -2,15 +2,16 @@ import { Fragment, useRef, useState } from 'react'
 import {v4 as uuid} from 'uuid';
 import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
-import {selectCategories, addNewCategory, CategoryState } from '../../slices/billSlice';
+import {selectCategories, addNewCategory, CategoryState, updateBudget } from '../../slices/billSlice';
 import {ModalType} from './Modal';
 
-export default function CategoryModal ({open, setOpen}: ModalType) {
+export default function SingleInputModal ({open, setOpen, budgetModal, budget}: ModalType) {
  
  const categories = useSelector(selectCategories);
  const dispatch = useDispatch();
  
  const [newCategory, setNewCategory] = useState<string>("")
+ const [updatedBudget, setUpdatedBudget] = useState<any>(budget)
  
  const cancelButtonRef = useRef(null)
  
@@ -29,6 +30,13 @@ export default function CategoryModal ({open, setOpen}: ModalType) {
   }
   setOpen(false)
  }
+
+ const onUpdateBudget = () => {
+  dispatch(updateBudget(parseInt(updatedBudget, 10)))
+  if(typeof window === 'object')
+  localStorage.setItem('budget', updatedBudget.toString())
+  setOpen(false)
+}
  return (
    <Transition.Root show={open}>
    <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
@@ -57,19 +65,25 @@ export default function CategoryModal ({open, setOpen}: ModalType) {
          >
    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-               <h2 className='text-center font-bold text-xl'>Add New Category</h2>
+               <h2 className='text-center font-bold text-xl'>{budgetModal ? "Update Budget" : "Add New Category"}</h2>
                <div>
-                <label htmlFor="newCategory" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray-300">Category :</label>
-                <input type="text" id={`new_category`} value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="mb-5 bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="New Category" required />
+                <label htmlFor="newCategory" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray-300">{budgetModal ? "Budget :" : "Category :"}</label>
+                {!budgetModal ? 
+                  <input type="text" id={`new_category`} value={newCategory} onChange={(e) => setNewCategory(e.target.value)} className="mb-5 bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="New Category" required /> :
+                  <div className='flex flex-row gap-3'>
+                      <div className="mb-5 bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg block w-30 p-2.5 dark:text-white">$</div>
+                      <input required type="number" id='budget' value={updatedBudget} onChange={(e) => setUpdatedBudget(parseInt(e.target.value, 10))} className="mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Budget" />
+                  </div>
+                }
                </div>
                </div>
                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                  <button
                    type="button"
                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                   onClick={onAddCategory}
+                   onClick={budgetModal ? onUpdateBudget : onAddCategory}
                  >
-                   Add
+                   {budgetModal ? "Update" : "Add"}
                  </button>
                  <button
                    type="button"

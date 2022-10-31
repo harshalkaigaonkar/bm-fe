@@ -20,7 +20,10 @@ const Bill: React.FC<{bill: BillState}> = ({bill}) => {
    <div className='m-2 w-80'>
     <div className='shadow-md rounded-t-md h-4 bg-blue-900'></div>
     <div key={bill.id} className="p-6  md:max-w-sm bg-white rounded-b-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-      <p className="mb-3 font-bold text-gray-700 dark:text-gray-400 border w-fit px-1 py-1 rounded-md">$ {amount}</p>
+      <div className='inline-flex flex-row items-center justify-between w-full mb-3'>
+      <p className="font-bold text-gray-700 dark:text-gray-400 border w-fit px-1 py-1 rounded-md">$ {amount}</p>
+      <p className={`px-3 py-1 font-bold border-2 rounded ${bill.paid ? "border-green-900 text-green-900" : "border-red-900 text-red-900"}`}>{bill.paid ? "PAID" : "UNPAID"}</p>
+      </div>
      <div className="w-full inline-flex justify-between items-center">
      <h5 className="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{bill.title}</h5>
       <h6 className="border px-4 py-1 text-gray-800 rounded-md">{bill.category}</h6>
