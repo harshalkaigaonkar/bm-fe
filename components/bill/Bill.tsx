@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { BillState } from '../../slices/billSlice'
 import Modal from '../modals/Modal'
 
 const Bill: React.FC<{bill: BillState}> = ({bill}) => {
- const [openUpdate, setOpenUpdate] = useState(false)
- const [openDelete, setOpenDelete] = useState(false)
+ const [openUpdate, setOpenUpdate] = useState<boolean>(false)
+ const [openDelete, setOpenDelete] = useState<boolean>(false)
+ const [amount, setAmount] = useState<string>(bill.amount);
 
  let date: string | any = new Date(bill.date);
  if(date) {
     date = date.toString().split(" ").slice(1, 4).join(" ");
  }
- let amount : string = new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(bill.amount);
+
+ useEffect(() => {
+   let amt : any = typeof window ==='object' && typeof document === 'object' ? new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(parseInt(amount, 10)): "0";
+   setAmount(amt);
+ }, [])
   return (
    <div className='m-2 w-80'>
     <div className='shadow-md rounded-t-md h-4 bg-blue-900'></div>

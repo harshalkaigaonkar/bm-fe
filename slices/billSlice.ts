@@ -16,13 +16,9 @@ export type CategoryState= {
   category: string,
 }
 
-export type BillsState = [
- BillState
-] | [];
+export type BillsState = BillState[] | [];
 
-export type CategoriesState = [
- CategoryState
-] | [];
+export type CategoriesState = CategoryState[] | [];
 
 export type InitialStateType = {
   bills: BillsState,

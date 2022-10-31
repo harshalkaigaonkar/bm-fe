@@ -5,7 +5,7 @@ import Modal from './modals/Modal'
 
 const MainDashBoard: React.FC<any> = ({setShowChart}) => {
   const allBills = useSelector(selectBills);
-  const monthNames = ["January", "February", "March", "April", "May", "June",
+  const monthNames: string[] = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
   // const dispatch = useDispatch();
