@@ -17,7 +17,7 @@ const MainDashBoard: React.FC<any> = ({setShowChart}) => {
       if(month === currentMonth)
       totalAmt += parseInt(bill.amount, 10);
     })
-    const totalAmtInFormat = new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(totalAmt)
+    const totalAmtInFormat: string = new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(totalAmt)
     setAmt(totalAmtInFormat);
   },[allBills]);
 
